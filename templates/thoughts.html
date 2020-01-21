@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    <div class = "container bg-light">
+        <nav class = "navbar navbar-light">
+            <div class = "ml-sm-2">
+                <h4 class= "text-capitalize d-inline">Hi {{ user_data['first_name'] }} {{ user_data['last_name'] }}!</h4>
+            </div>
+            <div class = "mr-sm-2">
+                <a href = "/logout"><u>Log Out</u></a>
+            </div>
+        </nav>
+        <form action = "/add" method = "POST">
+            <div class = "form-row col-sm-8">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p>{{message}}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                    <div class = "col-sm-9">
+                        <textarea  placeholder = "Post a Great Thought Here..." class = "form-control" rows = "1" name = "thought"></textarea>
+                    </div>
+                    <div class = "mx-3 col-sm-2">
+                        <input  class = "bg-primary text-white" type = "submit" value = "Add Thought">
+                    </div>
+                </div>
+        </form>
+        {% for thought in all_thoughts| sort(attribute='like_count', reverse=True) %}
+        <div class = "row my-5">
+            <div class = "col-sm-2">
+                <h5 class = " text-capitalize">{{ thought['first_name'] }} says:</h5>
+            </div>
+            <div class = "col-sm-4">
+                <div class = "card">
+                    <div class = "card-body">
+                        <p>{{ thought['content'] }}</p>
+                    </div>
+                </div>
+                <a class = "offset-1" href = "/details/{{thought['thought_id']}}"><u>Details</u></a>
+                <p class = "d-inline offset-3">{{ thought['like_count'] }} people like this</p>
+            </div>
+            <div class = "col-sm-4 mt-3">
+                {% if user_data['user_id'] == thought['author'] %}
+                    <a class = "border border-secondary bg-danger text-white px-1 py-1" href = "/delete/{{thought['thought_id']}}">Delete</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+</body>
+</html>
